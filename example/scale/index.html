@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>图片缩放测试</title>
+    </head>
+    <body>
+        <input id="inputImage" type="file" />
+        <div>比例:<input type="text" id="rate" /></div>
+        <h4>插件缩放后</h4>
+        <canvas id="exportCanvas">你的浏览器不支持canvas</canvas>
+        <h4>canvas直接压缩</h4>
+        <canvas id="drawCanvas">你的浏览器不支持canvas</canvas>
+        <h4>原图</h4>
+        <canvas id="inputCanvas">你的浏览器不支持canvas</canvas>
+        <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="scale.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                var ipt = $("#inputCanvas")[0],
+                    iptC = ipt.getContext("2d"),
+                    dw = $("#drawCanvas")[0],
+                    dwC = dw.getContext("2d"),
+                    ept = $("#exportCanvas")[0];
+
+                var $rate = $("#rate");
+
+                $("#inputImage").change(function () {
+                    var $this = $(this),
+                        file = this.files[0],
+                        rate = parseFloat( $rate.val() ) || 0.5;
+
+                    var reader = new FileReader();
+
+                    reader.readAsDataURL( file );
+
+                    reader.onload = function () {
+                        getScale(this.result, rate);
+                    }
+
+                    $this.val("");
+                });
+
+                $rate.change(function () {
+                    var rate = parseFloat( $rate.val() ) || 0.5,
+                        url = ipt.toDataURL();
+
+                    getScale(url, rate);
+
+                    $rate.val(rate);
+                });
+
+                function getScale( url, rate ) {
+                    var img = new Image();
+
+                    img.onload = function () {
+                        var rWidth = this.width * rate,
+                            rHeight = this.height * rate;
+
+                        ipt.width = this.width;
+                        ipt.height = this.height;
+
+                        iptC.clearRect(0, 0, ipt.width, ipt.height);
+                        iptC.drawImage(this, 0, 0);
+
+                        dw.width = rWidth;
+                        dw.height = rHeight;
+
+                        dwC.clearRect(0, 0, rWidth, rHeight);
+                        dwC.drawImage(this, 0, 0, rWidth, rHeight);
+
+                        scale(rate, ipt, ept);
+                    }
+
+                    img.src = url;
+                }
+            });
+        </script>
+    </body>
+</html>
