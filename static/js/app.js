@@ -1,2 +1,1543 @@
-webpackJsonp([1],{128:function(t,e,n){"use strict";function i(t){return t instanceof Element?t:v(t)?document.getElementById(t):document.createElement("div")}function a(t){return function(e){var n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"https://api.github.com",a=localStorage.getItem(g.a),r={url:e,method:t,baseURL:i,responseType:"json",headers:{Accept:"application/vnd.github.squirrel-girl-preview, application/vnd.github.html+json"}};return a&&(r.headers.Authorization="token "+a),n&&"get"===t||"delete"===t?r.url+=f.stringify(n):"post"!==t&&"put"!==t&&"patch"!==t||(r.data=o()(n),r.headers["Content-Type"]="application/json"),h()(r).then(function(t){return t.data})}}e.b=i,n.d(e,"c",function(){return f}),n.d(e,"a",function(){return p});var r=n(129),o=n.n(r),s=n(131),c=(n.n(s),n(130)),l=n.n(c),u=n(132),d=n.n(u),m=n(188),h=n.n(m),g=n(83),v=function(t){return"[object String]"===toString.call(t)},f={parse:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:window.location.search;if(!t)return{};var e="?"===t[0]?t.substring(1):t,n={};return e.split("&").forEach(function(t){var e=t.split("="),i=d()(e,2),a=i[0],r=i[1];a&&(n[a]=r)}),n},stringify:function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"?",n=l()(t).map(function(e){return e+"="+encodeURIComponent(t[e]||"")}).join("&");return n?e+n:""}},p={get:a("get"),post:a("post"),delete:a("delete"),put:a("put")}},182:function(t,e,n){var i=n(80)(n(206),n(472),null,null,null);t.exports=i.exports},183:function(t,e,n){function i(t){n(466)}var a=n(80)(n(207),n(474),i,"data-v-a2a30300",null);t.exports=a.exports},184:function(t,e,n){var i=n(80)(n(208),n(471),null,null,null);t.exports=i.exports},185:function(t,e,n){var i=n(80)(n(209),n(473),null,null,null);t.exports=i.exports},206:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i=n(463),a=(n.n(i),n(465)),r=(n.n(a),n(128)),o=n(82);e.default={name:"app",data:function(){return{title:o.a,page:1,issues:[],user:{},timer:0,loading:!1,isPause:!1}},methods:{getIssues:function(){var t=this,e="/"===this.$route.path;e&&(this.loading=!0),r.a.get("/repos/"+o.b+"/"+o.c+"/issues",{creator:o.b,page:this.page}).then(function(n){e&&(t.loading=!1),n&&n.length?(t.issues=t.issues.concat(n),++t.page):t.pauseUpdate()}).catch(function(n){e&&(t.loading=!1)})},getUser:function(){var t=this;r.a.get("/users/"+o.b).then(function(e){e&&(t.user=e)})},onScrolling:function(t){var e=this,n=this.$route.name,i=this.$refs.context,a=i.scrollTop;switch(n){case"list":this.isPause||"list"!==n||i.scrollHeight!==a+i.clientHeight||(clearTimeout(this.timer),this.timer=setTimeout(function(){e.getIssues()},200));break;case"detail":for(var r=i.getElementsByTagName("h2"),o=void 0,s=0,c=r.length;s<c;++s){var l=r[s];(!o||Math.abs(o.offsetTop-a)>Math.abs(l.offsetTop-a))&&(o=l)}o&&(this.$refs["context-view"].hash=o.id)}},pauseUpdate:function(){var t=this;this.isPause=!0,setTimeout(function(){t.isPause=!1},2e4)},setLoading:function(t){this.loading=t}},mounted:function(){this.getUser(),this.getIssues()}}},207:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i=n(82),a=n(464),r=(n.n(a),n(210));e.default={name:"Detail",data:function(){var t=(window.location.hash||"").replace(/^#/,"");return window.location.hash="",{detail:{},hash:t,loading:!1}},watch:{loading:{immediate:!0,handler:function(t){this.$emit("loading",t)}}},mounted:function(){var t=this;document.title=i.a+" -- loading",this.loading=!0;var e=new r.a({id:this.$route.params.id,owner:i.b,repo:i.c,oauth:i.d});e.render(document.getElementById("comments")),e.getIssue().then(function(e){t.getDetail(e),t.loading=!1}).catch(function(){t.$router.push("error")})},methods:{getDetail:function(t){var e=this,n=[],i=t.body_html||"";this.detail.title=document.title=t.title,this.detail.html=i.replace(/(\<h2\>)(.+)(?=\<\/h2\>)/gi,function(t,e){var i={id:"content_title_"+n.length,label:t.replace(/\<h\d\>/,"")};return n.push(i),t.replace(/(\<h\d)/,"$1 id="+i.id)}),this.detail.paragraph=n,setTimeout(function(){window.location.hash=e.hash},0)}}}},208:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default={name:"Error",data:function(){return{seconds:5}},mounted:function(){var t=this,e=setInterval(function(){--t.seconds&&(t.$router.push("/"),clearInterval(e))},1e3)}}},209:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i=n(82);e.default={name:"List",props:["issues"],data:function(){return{}},methods:{summary:function(t){return t.replace(/<pre[\s\S]*>[\s\S]*<\/pre>/g,"[code]code[/code]").replace(/<h[1-7][\s\S]*?>[\s\S]*?<\/h[1-7]>/g,"").replace(/<(\/{0,1})code>/g,"[$1code]").replace(/<[^>]+>/g," ").replace(/\[(\/{0,1})code\]/g,"<$1code>").replace(/\n/g,"")}},mounted:function(){window.document.title=i.a}}},210:function(t,e,n){"use strict";function i(t,e){t[e]=function(i){var a=n.i(b.b)(i),r=t.theme[e]||t.defaultTheme[e];return n.i(f.a)(function(){var e=r(t.state,t);a.firstChild?a.replaceChild(e,a.firstChild):a.appendChild(e)}),a}}var a=n(131),r=n.n(a),o=n(130),s=n.n(o),c=n(129),l=n.n(c),u=n(216),d=n.n(u),m=n(218),h=n.n(m),g=n(219),v=n.n(g),f=n(467),p=n(83),b=n(128),k=n(212),w={load:!1},_=function(){function t(){var e=this,i=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};h()(this,t),this.defaultTheme=k.a,this.useTheme(k.a),d()(this,{id:window.location.href,title:window.document.title,link:window.location.href,desc:"",labels:[],theme:k.a,oauth:{},perPage:20,maxCommentHeight:250},i),this.oauth.redirect_uri||(this.oauth.redirect_uri=window.location.href),this.useTheme(this.theme);var a={};try{var r=localStorage.getItem(p.b);this.accessToken&&r&&d()(a,JSON.parse(r),{fromCache:!0})}catch(t){localStorage.removeItem(p.b)}this.state=n.i(f.b)({user:a,error:null,meta:{},comments:void 0,reactions:[],commentReactions:{},currentPage:1});var o=b.c.parse();if(o.code){var s=this.oauth,c=s.client_id,u=s.client_secret,m=s.redirect_uri,g=o.code;delete o.code;var v=b.c.stringify(o),w=""+window.location.origin+window.location.pathname+v+window.location.hash;history.replaceState({},"",w),d()(this,{id:w,link:w},i),this.state.user.isLoggingIn=!0,b.a.post("https://gh-oauth.imsun.net",{code:g,client_id:c,client_secret:u,redirect_uri:m},"").then(function(t){e.accessToken=t.access_token,e.update()}).catch(function(t){e.state.user.isLoggingIn=!1,console.log(l()({code:g,client_id:c,client_secret:u})),console.log(t)})}else this.update()}return v()(t,[{key:"accessToken",get:function(){return localStorage.getItem(p.a)},set:function(t){localStorage.setItem(p.a,t)}},{key:"loginLink",get:function(){var t=d()({scope:"public_repo"},this.oauth);return"https://github.com/login/oauth/authorize"+b.c.stringify(t)}}]),v()(t,[{key:"init",value:function(){var t=this;return this.createIssue().then(function(){return t.loadComments()}).then(function(e){return t.state.error=null,e})}},{key:"useTheme",value:function(){var t=this,e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.theme=e,s()(this.theme).forEach(function(e){return i(t,e)})}},{key:"update",value:function(){var t=this;return r.a.all([this.loadMeta(),this.loadUserInfo()]).then(function(){return r.a.all([t.loadComments().then(function(){return t.loadCommentReactions()}),t.loadReactions()])}).catch(function(e){return t.state.error=e})}},{key:"markdown",value:function(t){return b.a.post("/markdown",{text:t,mode:"gfm"})}},{key:"createIssue",value:function(){var t=this,e=this.id,n=this.owner,i=this.repo,a=this.title,r=this.link,o=this.desc,s=this.labels;return b.a.post("/repos/"+n+"/"+i+"/issues",{title:a,labels:s.concat(["gitment",e]),body:r+"\n\n"+o}).then(function(e){return t.state.meta=e,e})}},{key:"getIssue",value:function(){var t=this;return this.state.meta.id?r.a.resolve(this.state.meta):w.load?new r.a(function(e,n){var i=setInterval(function(){t.state.meta.id?(e(t.state.meta),clearInterval(i)):w.load||(n(),clearInterval(i))},100)}):this.loadMeta()}},{key:"post",value:function(t){var e=this;return this.getIssue().then(function(e){return b.a.post(e.comments_url,{body:t},"")}).then(function(t){e.state.meta.comments++;var n=Math.ceil(e.state.meta.comments/e.perPage);return e.state.currentPage===n&&e.state.comments.push(t),t})}},{key:"loadMeta",value:function(){var t=this,e=this.id,n=this.owner,i=this.repo;return w.load=!0,b.a.get("/repos/"+n+"/"+i+"/issues/"+e).then(function(e){return t.state.meta=e,w.load=!1,e}).catch(function(t){return w.load=!1,t})}},{key:"loadComments",value:function(){var t=this,e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:this.state.currentPage;return this.getIssue().then(function(n){return b.a.get(n.comments_url,{page:e,per_page:t.perPage},"")}).then(function(e){return t.state.comments=e,e})}},{key:"loadUserInfo",value:function(){var t=this;return this.accessToken?b.a.get("/user").then(function(e){return t.state.user=e,localStorage.setItem(p.b,l()(e)),e}):(this.logout(),r.a.resolve({}))}},{key:"loadReactions",value:function(){var t=this;return this.accessToken?this.getIssue().then(function(t){return t.reactions.total_count?b.a.get(t.reactions.url,{},""):[]}).then(function(e){return t.state.reactions=e,e}):(this.state.reactions=[],r.a.resolve([]))}},{key:"loadCommentReactions",value:function(){var t=this;if(!this.accessToken)return this.state.commentReactions={},r.a.resolve([]);var e=this.state.comments,n={};return r.a.all(e.map(function(e){if(!e.reactions.total_count)return[];var n=t.owner,i=t.repo;return b.a.get("/repos/"+n+"/"+i+"/issues/comments/"+e.id+"/reactions",{})})).then(function(i){return e.forEach(function(t,e){n[t.id]=i[e]}),t.state.commentReactions=n,n})}},{key:"login",value:function(){window.location.href=this.loginLink}},{key:"logout",value:function(){localStorage.removeItem(p.a),localStorage.removeItem(p.b),this.state.user={}}},{key:"goto",value:function(t){return this.state.currentPage=t,this.state.comments=void 0,this.loadComments(t)}},{key:"like",value:function(){var t=this;if(!this.accessToken)return alert("Login to Like"),r.a.reject();var e=this.owner,n=this.repo;return b.a.post("/repos/"+e+"/"+n+"/issues/"+this.state.meta.number+"/reactions",{content:"heart"}).then(function(e){t.state.reactions.push(e),t.state.meta.reactions.heart++})}},{key:"unlike",value:function(){var t=this;if(!this.accessToken)return r.a.reject();var e=this.state,n=e.user,i=e.reactions,a=i.findIndex(function(t){return t.user.login===n.login});return b.a.delete("/reactions/"+i[a].id).then(function(){i.splice(a,1),t.state.meta.reactions.heart--})}},{key:"likeAComment",value:function(t){var e=this;if(!this.accessToken)return alert("Login to Like"),r.a.reject();var n=this.owner,i=this.repo,a=this.state.comments.find(function(e){return e.id===t});return b.a.post("/repos/"+n+"/"+i+"/issues/comments/"+t+"/reactions",{content:"heart"}).then(function(n){e.state.commentReactions[t].push(n),a.reactions.heart++})}},{key:"unlikeAComment",value:function(t){if(!this.accessToken)return r.a.reject();var e=this.state.commentReactions[t],n=this.state.comments.find(function(e){return e.id===t}),i=this.state.user,a=e.findIndex(function(t){return t.user.login===i.login});return b.a.delete("/reactions/"+e[a].id).then(function(){e.splice(a,1),n.reactions.heart--})}}]),t}();e.a=_},211:function(t,e,n){"use strict";n.d(e,"c",function(){return i}),n.d(e,"a",function(){return a}),n.d(e,"b",function(){return r});var i='<svg class="gitment-github-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 10c-8.3 0-15 6.7-15 15 0 6.6 4.3 12.2 10.3 14.2.8.1 1-.3 1-.7v-2.6c-4.2.9-5.1-2-5.1-2-.7-1.7-1.7-2.2-1.7-2.2-1.4-.9.1-.9.1-.9 1.5.1 2.3 1.5 2.3 1.5 1.3 2.3 3.5 1.6 4.4 1.2.1-1 .5-1.6 1-2-3.3-.4-6.8-1.7-6.8-7.4 0-1.6.6-3 1.5-4-.2-.4-.7-1.9.1-4 0 0 1.3-.4 4.1 1.5 1.2-.3 2.5-.5 3.8-.5 1.3 0 2.6.2 3.8.5 2.9-1.9 4.1-1.5 4.1-1.5.8 2.1.3 3.6.1 4 1 1 1.5 2.4 1.5 4 0 5.8-3.5 7-6.8 7.4.5.5 1 1.4 1 2.8v4.1c0 .4.3.9 1 .7 6-2 10.2-7.6 10.2-14.2C40 16.7 33.3 10 25 10z"/></svg>',a='<svg class="gitment-heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 39.7l-.6-.5C11.5 28.7 8 25 8 19c0-5 4-9 9-9 4.1 0 6.4 2.3 8 4.1 1.6-1.8 3.9-4.1 8-4.1 5 0 9 4 9 9 0 6-3.5 9.7-16.4 20.2l-.6.5zM17 12c-3.9 0-7 3.1-7 7 0 5.1 3.2 8.5 15 18.1 11.8-9.6 15-13 15-18.1 0-3.9-3.1-7-7-7-3.5 0-5.4 2.1-6.9 3.8L25 17.1l-1.1-1.3C22.4 14.1 20.5 12 17 12z"/></svg>',r='<svg class="gitment-spinner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 18c-.6 0-1-.4-1-1V9c0-.6.4-1 1-1s1 .4 1 1v8c0 .6-.4 1-1 1z"/><path opacity=".3" d="M25 42c-.6 0-1-.4-1-1v-8c0-.6.4-1 1-1s1 .4 1 1v8c0 .6-.4 1-1 1z"/><path opacity=".3" d="M29 19c-.2 0-.3 0-.5-.1-.4-.3-.6-.8-.3-1.3l4-6.9c.3-.4.8-.6 1.3-.3.4.3.6.8.3 1.3l-4 6.9c-.2.2-.5.4-.8.4z"/><path opacity=".3" d="M17 39.8c-.2 0-.3 0-.5-.1-.4-.3-.6-.8-.3-1.3l4-6.9c.3-.4.8-.6 1.3-.3.4.3.6.8.3 1.3l-4 6.9c-.2.2-.5.4-.8.4z"/><path opacity=".93" d="M21 19c-.3 0-.6-.2-.8-.5l-4-6.9c-.3-.4-.1-1 .3-1.3.4-.3 1-.1 1.3.3l4 6.9c.3.4.1 1-.3 1.3-.2.2-.3.2-.5.2z"/><path opacity=".3" d="M33 39.8c-.3 0-.6-.2-.8-.5l-4-6.9c-.3-.4-.1-1 .3-1.3.4-.3 1-.1 1.3.3l4 6.9c.3.4.1 1-.3 1.3-.2.1-.3.2-.5.2z"/><path opacity=".65" d="M17 26H9c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"/><path opacity=".3" d="M41 26h-8c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"/><path opacity=".86" d="M18.1 21.9c-.2 0-.3 0-.5-.1l-6.9-4c-.4-.3-.6-.8-.3-1.3.3-.4.8-.6 1.3-.3l6.9 4c.4.3.6.8.3 1.3-.2.3-.5.4-.8.4z"/><path opacity=".3" d="M38.9 33.9c-.2 0-.3 0-.5-.1l-6.9-4c-.4-.3-.6-.8-.3-1.3.3-.4.8-.6 1.3-.3l6.9 4c.4.3.6.8.3 1.3-.2.3-.5.4-.8.4z"/><path opacity=".44" d="M11.1 33.9c-.3 0-.6-.2-.8-.5-.3-.4-.1-1 .3-1.3l6.9-4c.4-.3 1-.1 1.3.3.3.4.1 1-.3 1.3l-6.9 4c-.1.2-.3.2-.5.2z"/><path opacity=".3" d="M31.9 21.9c-.3 0-.6-.2-.8-.5-.3-.4-.1-1 .3-1.3l6.9-4c.4-.3 1-.1 1.3.3.3.4.1 1-.3 1.3l-6.9 4c-.2.2-.3.2-.5.2z"/></svg>'},212:function(t,e,n){"use strict";function i(t,e){var n=t.meta,i=t.user,a=t.reactions,r=document.createElement("div");r.lang="en-US",r.className="gitment-container gitment-header-container";var o=document.createElement("span"),s=a.find(function(t){return"heart"===t.content&&t.user.login===i.login});o.className="gitment-header-like-btn",o.innerHTML="\n    "+u.a+"\n    "+(s?"Unlike":"Like")+"\n    "+(n.reactions&&n.reactions.heart?" • <strong>"+n.reactions.heart+"</strong> Liked":"")+"\n  ",s?(o.classList.add("liked"),o.onclick=function(){return e.unlike()}):(o.classList.remove("liked"),o.onclick=function(){return e.like()}),r.appendChild(o);var c=document.createElement("span");c.innerHTML="\n    "+(n.comments?" • <strong>"+n.comments+"</strong> Comments":"")+"\n  ",r.appendChild(c);var l=document.createElement("a");return l.className="gitment-header-issue-link",l.href=n.html_url,l.target="_blank",l.innerText="Issue Page",r.appendChild(l),r}function a(t,e){var n=t.meta,i=t.comments,a=t.commentReactions,r=t.currentPage,o=t.user,s=t.error,c=document.createElement("div");if(c.lang="en-US",c.className="gitment-container gitment-comments-container",s){var l=document.createElement("div");if(l.className="gitment-comments-error",s===d.c&&o.login&&o.login.toLowerCase()===e.owner.toLowerCase()){var m=document.createElement("div"),h=document.createElement("button");h.className="gitment-comments-init-btn",h.onclick=function(){h.setAttribute("disabled",!0),e.init().catch(function(t){h.removeAttribute("disabled"),alert(t)})},h.innerText="Initialize Comments",m.appendChild(h),l.appendChild(m)}else l.innerText=s;return c.appendChild(l),c}if(void 0===i){var g=document.createElement("div");return g.innerText="Loading comments...",g.className="gitment-comments-loading",c.appendChild(g),c}if(!i.length){var v=document.createElement("div");return v.className="gitment-comments-empty",v.innerText="No Comment Yet",c.appendChild(v),c}var f=document.createElement("ul");if(f.className="gitment-comments-list",i.forEach(function(t){var n=new Date(t.created_at),i=new Date(t.updated_at),r=document.createElement("li");r.className="gitment-comment",r.innerHTML='\n      <a class="gitment-comment-avatar" href="'+t.user.html_url+'" target="_blank">\n        <img class="gitment-comment-avatar-img" src="'+t.user.avatar_url+'"/>\n      </a>\n      <div class="gitment-comment-main">\n        <div class="gitment-comment-header">\n          <a class="gitment-comment-name" href="'+t.user.html_url+'" target="_blank">\n            '+t.user.login+'\n          </a>\n          commented on\n          <span title="'+n+'">'+n.toDateString()+"</span>\n          "+(n.toString()!==i.toString()?' • <span title="comment was edited at '+i+'">edited</span>':"")+'\n          <div class="gitment-comment-like-btn">'+u.a+" "+(t.reactions.heart||"")+'</div>\n        </div>\n        <div class="gitment-comment-body gitment-markdown">'+t.body_html+"</div>\n      </div>\n    ";var s=r.querySelector(".gitment-comment-like-btn");a[t.id]&&a[t.id].find(function(t){return"heart"===t.content&&t.user.login===o.login})?(s.classList.add("liked"),s.onclick=function(){return e.unlikeAComment(t.id)}):(s.classList.remove("liked"),s.onclick=function(){return e.likeAComment(t.id)});var c=document.createElement("img"),l=r.querySelector(".gitment-comment-body");c.className="gitment-hidden",c.src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",c.onload=function(){l.clientHeight>e.maxCommentHeight&&(l.classList.add("gitment-comment-body-folded"),l.style.maxHeight=e.maxCommentHeight+"px",l.title="Click to Expand",l.onclick=function(){l.classList.remove("gitment-comment-body-folded"),l.style.maxHeight="",l.title="",l.onclick=null})},r.appendChild(c),f.appendChild(r)}),c.appendChild(f),n){var p=Math.ceil(n.comments/e.perPage);if(p>1){var b=document.createElement("ul");if(b.className="gitment-comments-pagination",r>1){var k=document.createElement("li");k.className="gitment-comments-page-item",k.innerText="Previous",k.onclick=function(){return e.goto(r-1)},b.appendChild(k)}for(var w=1;w<=p;w++)!function(t){var n=document.createElement("li");n.className="gitment-comments-page-item",n.innerText=t,n.onclick=function(){return e.goto(t)},r===t&&n.classList.add("gitment-selected"),b.appendChild(n)}(w);if(r<p){var _=document.createElement("li");_.className="gitment-comments-page-item",_.innerText="Next",_.onclick=function(){return e.goto(r+1)},b.appendChild(_)}c.appendChild(b)}}return c}function r(t,e){var n=t.user,i=t.error,a=document.createElement("div");a.lang="en-US",a.className="gitment-container gitment-editor-container";var r=n.login&&!i?"":"disabled",o=n.login?"":"Login to Comment";a.innerHTML="\n      "+(n.login?'<a class="gitment-editor-avatar" href="'+n.html_url+'" target="_blank">\n            <img class="gitment-editor-avatar-img" src="'+n.avatar_url+'"/>\n          </a>':n.isLoggingIn?'<div class="gitment-editor-avatar">'+u.b+"</div>":'<a class="gitment-editor-avatar" href="'+e.loginLink+'" title="login with GitHub">\n              '+u.c+"\n            </a>")+'\n    </a>\n    <div class="gitment-editor-main">\n      <div class="gitment-editor-header">\n        <nav class="gitment-editor-tabs">\n          <button class="gitment-editor-tab gitment-selected">Write</button>\n          <button class="gitment-editor-tab">Preview</button>\n        </nav>\n        <div class="gitment-editor-login">\n          '+(n.login?'<a class="gitment-editor-logout-link">Logout</a>':n.isLoggingIn?"Logging in...":'<a class="gitment-editor-login-link" href="'+e.loginLink+'">Login</a> with GitHub')+'\n        </div>\n      </div>\n      <div class="gitment-editor-body">\n        <div class="gitment-editor-write-field">\n          <textarea placeholder="Leave a comment" title="'+o+'" '+r+'></textarea>\n        </div>\n        <div class="gitment-editor-preview-field gitment-hidden">\n          <div class="gitment-editor-preview gitment-markdown"></div>\n        </div>\n      </div>\n    </div>\n    <div class="gitment-editor-footer">\n      <a class="gitment-editor-footer-tip" href="https://guides.github.com/features/mastering-markdown/" target="_blank">\n        Styling with Markdown is supported\n      </a>\n      <button class="gitment-editor-submit" title="'+o+'" '+r+">Comment</button>\n    </div>\n  ",n.login&&(a.querySelector(".gitment-editor-logout-link").onclick=function(){return e.logout()});var s=a.querySelector(".gitment-editor-write-field"),c=a.querySelector(".gitment-editor-preview-field"),d=s.querySelector("textarea");d.oninput=function(){d.style.height="auto";var t=window.getComputedStyle(d,null),e=parseInt(t.height,10),n=d.clientHeight,i=d.scrollHeight;n<i&&(d.style.height=e+i-n+"px")};var m=a.querySelectorAll(".gitment-editor-tab"),h=l()(m,2),g=h[0],v=h[1];g.onclick=function(){g.classList.add("gitment-selected"),v.classList.remove("gitment-selected"),s.classList.remove("gitment-hidden"),c.classList.add("gitment-hidden"),d.focus()},v.onclick=function(){v.classList.add("gitment-selected"),g.classList.remove("gitment-selected"),c.classList.remove("gitment-hidden"),s.classList.add("gitment-hidden");var t=c.querySelector(".gitment-editor-preview"),n=d.value.trim();if(!n)return void(t.innerText="Nothing to preview");t.innerText="Loading preview...",e.markdown(n).then(function(e){return t.innerHTML=e})};var f=a.querySelector(".gitment-editor-submit");return f.onclick=function(){f.innerText="Submitting...",f.setAttribute("disabled",!0),e.post(d.value.trim()).then(function(t){d.value="",d.style.height="auto",f.removeAttribute("disabled"),f.innerText="Comment"}).catch(function(t){alert(t),f.removeAttribute("disabled"),f.innerText="Comment"})},a}function o(){var t=document.createElement("div");return t.lang="en-US",t.className="gitment-container gitment-footer-container",t.innerHTML='\n    Powered by\n    <a class="gitment-footer-project-link" href="https://github.com/imsun/gitment" target="_blank">\n      Gitment\n    </a>\n  ',t}function s(t,e){var n=document.createElement("div");return n.lang="en-US",n.className="gitment-container gitment-root-container",n.appendChild(e.renderHeader(t,e)),n.appendChild(e.renderComments(t,e)),n.appendChild(e.renderEditor(t,e)),n.appendChild(e.renderFooter(t,e)),n}var c=n(132),l=n.n(c),u=n(211),d=n(83);e.a={render:s,renderHeader:i,renderComments:a,renderEditor:r,renderFooter:o}},213:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var i=n(187),a=n(186),r=n(182),o=n.n(r),s=n(183),c=n.n(s),l=n(185),u=n.n(l),d=n(184),m=n.n(d);i.a.use(a.a);var h=[{path:"/list",name:"list",redirect:"/"},{path:"/detail/:id",name:"detail",component:c.a},{path:"/:id(\\d+)",name:"detail",component:c.a},{path:"/",name:"list",component:u.a},{path:"error",name:"error",component:m.a},{path:"*",name:"error",component:m.a}],g=new a.a({base:"blog/",routes:h,mode:"history"});new i.a({router:g,render:function(t){return t(o.a)}}).$mount("#app")},463:function(t,e){},464:function(t,e){},465:function(t,e){},466:function(t,e){},471:function(t,e){t.exports={render:function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"content"},[n("p",[t._v("页面不存在，"+t._s(t.seconds)+"秒后回到首页")])])},staticRenderFns:[]}},472:function(t,e){t.exports={render:function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{attrs:{id:"app"}},[n("header",{staticClass:"main"},[n("div",{staticClass:"main-info"},[n("a",{attrs:{href:t.user.html_url,target:"_blank"}},[n("div",{staticClass:"main-avatar"},[n("img",{attrs:{src:t.user.avatar_url}})]),t._v(" "),n("font",[t._v(t._s(t.user.name||t.user.login))])],1)]),t._v(" "),n("div",{staticClass:"main-title"},[n("router-link",{attrs:{to:"/"}},[t._v("\n                "+t._s(t.title))])],1)]),t._v(" "),n("section",{ref:"context",staticClass:"context",on:{scroll:t.onScrolling}},[n("router-view",{ref:"context-view",attrs:{issues:t.issues},on:{getMoreIssues:t.getIssues,loading:t.setLoading}}),t._v(" "),n("div",{directives:[{name:"show",rawName:"v-show",value:t.loading,expression:"loading"}],staticClass:"loading-tips"},[n("svg",{attrs:{height:"60",viewBox:"0 0 16 16",version:"1.1",width:"60","aria-hidden":"true"}},[n("path",{attrs:{"fill-rule":"evenodd",d:"M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"}})]),t._v(" "),n("p",[t._v("loading")])])],1),t._v(" "),t._m(0)])},staticRenderFns:[function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("footer",{staticClass:"main"},[n("p",[t._v("Powered By "),n("a",{attrs:{href:"http://github.com"}},[t._v("Github")])])])}]}},473:function(t,e){t.exports={render:function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",{staticClass:"issue-list"},t._l(t.issues,function(e){return n("div",{staticClass:"issue-item"},[n("div",{staticClass:"issue-text"},[n("router-link",{attrs:{to:"/detail/"+e.number}},[t._v(t._s(e.title))]),t._v(" "),n("p",{domProps:{innerHTML:t._s(t.summary(e.body_html))}})],1)])}))},staticRenderFns:[]}},474:function(t,e){t.exports={render:function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("section",{directives:[{name:"show",rawName:"v-show",value:!t.loading,expression:"!loading"}]},[n("div",{staticClass:"content"},[n("ul",t._l(t.detail.paragraph,function(e){return n("a",{class:{active:t.hash===e.id},attrs:{href:"#"+e.id},on:{click:function(n){t.hash=e.id}}},[n("li",{domProps:{innerHTML:t._s(e.label)}})])})),t._v(" "),n("article",{staticClass:"gitment-comment-body gitment-markdown"},[n("h1",[t._v(t._s(t.detail.title))]),t._v(" "),n("div",{domProps:{innerHTML:t._s(t.detail.html)}})])]),t._v(" "),n("div",{attrs:{id:"comments"}})])},staticRenderFns:[]}},82:function(t,e,n){"use strict";n.d(e,"b",function(){return i}),n.d(e,"c",function(){return a}),n.d(e,"d",function(){return r}),n.d(e,"a",function(){return o});var i="Toninie",a="toninie.github.io",r={client_id:"b3e11e60e74839d5c0b6",client_secret:"affb7389c92dfd8b53bd08bfce74b735567e1e71"},o="Mr.Toni Barbershop"},83:function(t,e,n){"use strict";n.d(e,"a",function(){return i}),n.d(e,"b",function(){return a}),n.d(e,"c",function(){return r});var i="gitment-comments-token",a="gitment-user-info",r=new Error("Comments Not Initialized")}},[213]);
-//# sourceMappingURL=app.js.map?t=28ad7e665f20230d9e85
+webpackJsonp([1],{
+
+/***/ 101:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = getTargetContainer;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(143);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(69);
+
+
+
+const isString = s => toString.call(s) === '[object String]';
+/* unused harmony export isString */
+
+
+function getTargetContainer(container) {
+    let targetContainer;
+    if (container instanceof Element) {
+        targetContainer = container;
+    } else if (isString(container)) {
+        targetContainer = document.getElementById(container);
+    } else {
+        targetContainer = document.createElement('div');
+    }
+
+    return targetContainer;
+}
+
+const Query = {
+    parse(search = window.location.search) {
+        if (!search) return {};
+        const queryString = search[0] === '?' ? search.substring(1) : search;
+        const query = {};
+        queryString.split('&').forEach(queryStr => {
+            const [key, value] = queryStr.split('=');
+            if (key) query[key] = value;
+        });
+
+        return query;
+    },
+    stringify(query, prefix = '?') {
+        const queryString = Object.keys(query).map(key => `${key}=${encodeURIComponent(query[key] || '')}`).join('&');
+        return queryString ? prefix + queryString : '';
+    }
+};
+/* harmony export (immutable) */ __webpack_exports__["c"] = Query;
+
+
+function ajaxFactory(method) {
+    return function (apiPath, data = {}, base = 'https://api.github.com') {
+        const req = new XMLHttpRequest();
+        const token = localStorage.getItem(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LS_ACCESS_TOKEN_KEY */]);
+
+        let url = `${base}${apiPath}`;
+        let body = null;
+        if (method === 'GET' || method === 'DELETE') {
+            url += Query.stringify(data);
+        }
+
+        const p = new Promise((resolve, reject) => {
+            req.addEventListener('load', () => {
+                const contentType = req.getResponseHeader('content-type');
+                const res = req.responseText;
+                if (!/json/.test(contentType)) {
+                    resolve(res);
+                    return;
+                }
+                const data = req.responseText ? JSON.parse(res) : {};
+                if (data.message) {
+                    reject(new Error(data.message));
+                } else {
+                    resolve(data);
+                }
+            });
+            req.addEventListener('error', error => reject(error));
+        });
+
+        req.open(method, url, true);
+
+        req.setRequestHeader('Accept', 'application/vnd.github.squirrel-girl-preview, application/vnd.github.html+json');
+        if (token) {
+            req.setRequestHeader('Authorization', `token ${token}`);
+        }
+        if (method !== 'GET' && method !== 'DELETE') {
+            body = JSON.stringify(data);
+            req.setRequestHeader('Content-Type', 'application/json');
+        }
+
+        req.send(body);
+        return p;
+    };
+}
+
+function ajax(method) {
+    return function (apiPath, data = {}, base = 'https://api.github.com') {
+        const token = localStorage.getItem(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LS_ACCESS_TOKEN_KEY */]);
+
+        const axiosSettings = {
+            url: apiPath,
+            method: method,
+            baseURL: base,
+            responseType: "json",
+            headers: {
+                'Accept': 'application/vnd.github.squirrel-girl-preview, application/vnd.github.html+json'
+            }
+        };
+
+        if (token) {
+            axiosSettings.headers['Authorization'] = `token ${token}`;
+        }
+
+        if (data && method === 'get' || method === 'delete') {
+            axiosSettings.url += Query.stringify(data);
+        } else if (method === "post" || method === "put" || method === "patch") {
+            axiosSettings.data = JSON.stringify(data);
+            axiosSettings.headers['Content-Type'] = "application/json";
+        }
+
+        return __WEBPACK_IMPORTED_MODULE_0_axios___default()(axiosSettings).then(response => {
+            // 只返回data，其他不返回
+            return response.data;
+        });
+    };
+}
+
+/*export const http = {
+    get: ajaxFactory('GET'),
+    post: ajaxFactory('POST'),
+    delete: ajaxFactory('DELETE'),
+    put: ajaxFactory('PUT')
+}*/
+
+const http = {
+    get: ajax('get'),
+    post: ajax('post'),
+    delete: ajax('delete'),
+    put: ajax('put')
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = http;
+
+
+/***/ }),
+
+/***/ 137:
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(66)(
+  /* script */
+  __webpack_require__(161),
+  /* template */
+  __webpack_require__(380),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 138:
+/***/ (function(module, exports, __webpack_require__) {
+
+function injectStyle (ssrContext) {
+  __webpack_require__(372)
+}
+var Component = __webpack_require__(66)(
+  /* script */
+  __webpack_require__(162),
+  /* template */
+  __webpack_require__(379),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  "data-v-4a32f5fe",
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 139:
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(66)(
+  /* script */
+  __webpack_require__(163),
+  /* template */
+  __webpack_require__(378),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 140:
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(66)(
+  /* script */
+  __webpack_require__(164),
+  /* template */
+  __webpack_require__(377),
+  /* styles */
+  null,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 161:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_normalize_css__ = __webpack_require__(369);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_normalize_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_normalize_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__style_main_css__ = __webpack_require__(371);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__style_main_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__style_main_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gitment_utils__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config__ = __webpack_require__(68);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'app',
+    data: function () {
+        return {
+            title: __WEBPACK_IMPORTED_MODULE_3__config__["a" /* TITLE */],
+            page: 1,
+            issues: [],
+            user: {},
+            timer: 0,
+            loading: false,
+            isPause: false
+        };
+    },
+    methods: {
+        getIssues() {
+            const isShowList = this.$route.path === '/';
+
+            if (isShowList) this.loading = true;
+
+            __WEBPACK_IMPORTED_MODULE_2__gitment_utils__["a" /* http */].get(`/repos/${__WEBPACK_IMPORTED_MODULE_3__config__["b" /* OWNER */]}/${__WEBPACK_IMPORTED_MODULE_3__config__["c" /* REPO */]}/issues`, { creator: __WEBPACK_IMPORTED_MODULE_3__config__["b" /* OWNER */], page: this.page }).then(issues => {
+                if (isShowList) this.loading = false;
+
+                if (issues && issues.length) {
+                    this.issues = this.issues.concat(issues);
+                    ++this.page;
+                } else {
+                    this.pauseUpdate();
+                }
+            }).catch(error => {
+                if (isShowList) this.loading = false;
+            });
+        },
+        getUser() {
+            __WEBPACK_IMPORTED_MODULE_2__gitment_utils__["a" /* http */].get(`/users/${__WEBPACK_IMPORTED_MODULE_3__config__["b" /* OWNER */]}`).then(user => {
+                if (user) {
+                    this.user = user;
+                }
+            });
+        },
+        onScrolling(e) {
+            const routeName = this.$route.name;
+            const $context = this.$refs['context'];
+            const scrollTop = $context.scrollTop;
+
+            switch (routeName) {
+                case 'list':
+                    if (!this.isPause && routeName === 'list' && $context.scrollHeight === scrollTop + $context.clientHeight) {
+                        clearTimeout(this.timer);
+                        this.timer = setTimeout(() => {
+                            this.getIssues();
+                        }, 200);
+                    }
+
+                    break;
+                case 'detail':
+                    let $ids = $context.getElementsByTagName('h2'),
+                        $hash;
+
+                    for (let i = 0, len = $ids.length; i < len; ++i) {
+                        let $i = $ids[i];
+
+                        if (!$hash || Math.abs($hash.offsetTop - scrollTop) > Math.abs($i.offsetTop - scrollTop)) {
+                            $hash = $i;
+                        }
+                    }
+                    if ($hash) this.$refs['context-view'].hash = $hash.id;
+                    break;
+            }
+        },
+        pauseUpdate() {
+            this.isPause = true;
+
+            setTimeout(() => {
+                this.isPause = false;
+            }, 20000);
+        },
+        setLoading(val) {
+            this.loading = val;
+        }
+    },
+    mounted() {
+        this.getUser();
+        this.getIssues();
+    }
+});
+
+/***/ }),
+
+/***/ 162:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gitment_default_css__ = __webpack_require__(370);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gitment_default_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__gitment_default_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gitment_gitment_js__ = __webpack_require__(165);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'Detail',
+    data() {
+        let hash = (window.location.hash || '').replace(/^#/, '');
+
+        window.location.hash = '';
+
+        return {
+            detail: {},
+            hash: hash,
+            loading: false
+        };
+    },
+    watch: {
+        loading: {
+            immediate: true,
+            handler(val) {
+                this.$emit('loading', val);
+            }
+        }
+    },
+    mounted() {
+        document.title = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* TITLE */] + " -- loading";
+
+        this.loading = true;
+
+        const gitment = new __WEBPACK_IMPORTED_MODULE_2__gitment_gitment_js__["a" /* default */]({
+            id: this.$route.params.id,
+            owner: __WEBPACK_IMPORTED_MODULE_0__config__["b" /* OWNER */],
+            repo: __WEBPACK_IMPORTED_MODULE_0__config__["c" /* REPO */],
+            oauth: __WEBPACK_IMPORTED_MODULE_0__config__["d" /* OAUTH */]
+        });
+
+        gitment.render(document.getElementById('comments'));
+
+        gitment.getIssue().then(issue => {
+            this.getDetail(issue);
+            this.loading = false;
+        }).catch(() => {
+            this.$router.push('error');
+        });
+    },
+    methods: {
+        getDetail(issue) {
+            const paragraph = [];
+
+            let html = issue.body_html || '';
+
+            this.detail.title = document.title = issue.title;
+
+            this.detail.html = html.replace(/(\<h2\>)(.+)(?=\<\/h2\>)/ig, (str, key) => {
+                let t = {
+                    id: 'content_title_' + paragraph.length,
+                    label: str.replace(/\<h\d\>/, '')
+                };
+
+                paragraph.push(t);
+
+                return str.replace(/(\<h\d)/, `$1 id=${t.id}`);
+            });
+
+            this.detail.paragraph = paragraph;
+
+            setTimeout(() => {
+                window.location.hash = this.hash;
+            }, 0);
+        }
+    }
+});
+
+/***/ }),
+
+/***/ 163:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'Error',
+    data() {
+        return {
+            seconds: 5
+        };
+    },
+    mounted() {
+        let timer = setInterval(() => {
+            if (--this.seconds) {
+                this.$router.push('/');
+                clearInterval(timer);
+            }
+        }, 1000);
+    }
+});
+
+/***/ }),
+
+/***/ 164:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(68);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'List',
+    props: ['issues'],
+    data() {
+        return {};
+    },
+    methods: {
+        summary(html) {
+            return html.replace(/<pre[\s\S]*>[\s\S]*<\/pre>/g, "[code]code[/code]").replace(/<h[1-7][\s\S]*?>[\s\S]*?<\/h[1-7]>/g, "").replace(/<(\/{0,1})code>/g, `[$1code]`).replace(/<[^>]+>/g, " ").replace(/\[(\/{0,1})code\]/g, `<$1code>`).replace(/\n/g, "");
+        }
+    },
+    mounted() {
+        window.document.title = __WEBPACK_IMPORTED_MODULE_0__config__["a" /* TITLE */];
+    }
+});
+
+/***/ }),
+
+/***/ 165:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_mobx__ = __webpack_require__(373);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__theme_default__ = __webpack_require__(167);
+
+
+
+
+
+
+const scope = 'public_repo';
+const status = {
+  load: false
+};
+
+function extendRenderer(instance, renderer) {
+  instance[renderer] = container => {
+    const targetContainer = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils__["b" /* getTargetContainer */])(container);
+    const render = instance.theme[renderer] || instance.defaultTheme[renderer];
+
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_mobx__["a" /* autorun */])(() => {
+      const e = render(instance.state, instance);
+      if (targetContainer.firstChild) {
+        targetContainer.replaceChild(e, targetContainer.firstChild);
+      } else {
+        targetContainer.appendChild(e);
+      }
+    });
+
+    return targetContainer;
+  };
+}
+
+class Gitment {
+  get accessToken() {
+    return localStorage.getItem(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LS_ACCESS_TOKEN_KEY */]);
+  }
+  set accessToken(token) {
+    localStorage.setItem(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LS_ACCESS_TOKEN_KEY */], token);
+  }
+
+  get loginLink() {
+    const oauthUri = 'https://github.com/login/oauth/authorize';
+
+    const oauthParams = Object.assign({
+      scope
+    }, this.oauth);
+
+    return `${oauthUri}${__WEBPACK_IMPORTED_MODULE_2__utils__["c" /* Query */].stringify(oauthParams)}`;
+  }
+
+  constructor(options = {}) {
+    this.defaultTheme = __WEBPACK_IMPORTED_MODULE_3__theme_default__["a" /* default */];
+    this.useTheme(__WEBPACK_IMPORTED_MODULE_3__theme_default__["a" /* default */]);
+
+    Object.assign(this, {
+      id: window.location.href,
+      title: window.document.title,
+      link: window.location.href,
+      desc: '',
+      labels: [],
+      theme: __WEBPACK_IMPORTED_MODULE_3__theme_default__["a" /* default */],
+      oauth: {},
+      perPage: 20,
+      maxCommentHeight: 250
+    }, options);
+
+    if (!this.oauth.redirect_uri) this.oauth.redirect_uri = window.location.href;
+
+    this.useTheme(this.theme);
+
+    const user = {};
+    try {
+      const userInfo = localStorage.getItem(__WEBPACK_IMPORTED_MODULE_1__constants__["b" /* LS_USER_KEY */]);
+      if (this.accessToken && userInfo) {
+        Object.assign(user, JSON.parse(userInfo), {
+          fromCache: true
+        });
+      }
+    } catch (e) {
+      localStorage.removeItem(__WEBPACK_IMPORTED_MODULE_1__constants__["b" /* LS_USER_KEY */]);
+    }
+
+    this.state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_mobx__["b" /* observable */])({
+      user,
+      error: null,
+      meta: {},
+      comments: undefined,
+      reactions: [],
+      commentReactions: {},
+      currentPage: 1
+    });
+
+    const query = __WEBPACK_IMPORTED_MODULE_2__utils__["c" /* Query */].parse();
+    if (query.code) {
+      const { client_id, client_secret, redirect_uri } = this.oauth;
+      const code = query.code;
+      delete query.code;
+      const search = __WEBPACK_IMPORTED_MODULE_2__utils__["c" /* Query */].stringify(query);
+      const replacedUrl = `${window.location.origin}${window.location.pathname}${search}${window.location.hash}`;
+      history.replaceState({}, '', replacedUrl);
+
+      Object.assign(this, {
+        id: replacedUrl,
+        link: replacedUrl
+      }, options);
+
+      this.state.user.isLoggingIn = true;
+      // 'https://github.com/login/oauth/access_token'
+      __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].post('https://gh-oauth.imsun.net', {
+        code,
+        client_id,
+        client_secret,
+        redirect_uri
+      }, '').then(data => {
+        this.accessToken = data.access_token;
+        this.update();
+      }).catch(e => {
+        this.state.user.isLoggingIn = false;
+        console.log(JSON.stringify({ code, client_id, client_secret }));
+        console.log(e);
+      });
+    } else {
+      this.update();
+    }
+  }
+
+  init() {
+    return this.createIssue().then(() => this.loadComments()).then(comments => {
+      this.state.error = null;
+      return comments;
+    });
+  }
+
+  useTheme(theme = {}) {
+    this.theme = theme;
+
+    const renderers = Object.keys(this.theme);
+    renderers.forEach(renderer => extendRenderer(this, renderer));
+  }
+
+  update() {
+    return Promise.all([this.loadMeta(), this.loadUserInfo()]).then(() => Promise.all([this.loadComments().then(() => this.loadCommentReactions()), this.loadReactions()])).catch(e => this.state.error = e);
+  }
+
+  markdown(text) {
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].post('/markdown', {
+      text,
+      mode: 'gfm'
+    });
+  }
+
+  createIssue() {
+    const { id, owner, repo, title, link, desc, labels } = this;
+
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].post(`/repos/${owner}/${repo}/issues`, {
+      title,
+      labels: labels.concat(['gitment', id]),
+      body: `${link}\n\n${desc}`
+    }).then(meta => {
+      this.state.meta = meta;
+      return meta;
+    });
+  }
+
+  getIssue() {
+    if (this.state.meta.id) {
+      return Promise.resolve(this.state.meta);
+    } else if (status.load) {
+      return new Promise((resolve, reject) => {
+        const timer = setInterval(() => {
+          if (this.state.meta.id) {
+            resolve(this.state.meta);
+            clearInterval(timer);
+          } else if (!status.load) {
+            reject();
+            clearInterval(timer);
+          }
+        }, 100);
+      });
+    } else {
+      return this.loadMeta();
+    }
+  }
+
+  post(body) {
+    return this.getIssue().then(issue => __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].post(issue.comments_url, { body }, '')).then(data => {
+      this.state.meta.comments++;
+      const pageCount = Math.ceil(this.state.meta.comments / this.perPage);
+      if (this.state.currentPage === pageCount) {
+        this.state.comments.push(data);
+      }
+      return data;
+    });
+  }
+
+  loadMeta() {
+    const { id, owner, repo } = this;
+    status.load = true;
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].get(`/repos/${owner}/${repo}/issues/${id}`).then(issues => {
+      // if (!issues.length) return Promise.reject(NOT_INITIALIZED_ERROR)
+      this.state.meta = issues;
+      status.load = false;
+      return issues;
+    }).catch(error => {
+      status.load = false;
+      return error;
+    });
+  }
+
+  loadComments(page = this.state.currentPage) {
+    return this.getIssue().then(issue => __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].get(issue.comments_url, { page, per_page: this.perPage }, '')).then(comments => {
+      this.state.comments = comments;
+      return comments;
+    });
+  }
+
+  loadUserInfo() {
+    if (!this.accessToken) {
+      this.logout();
+      return Promise.resolve({});
+    }
+
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].get('/user').then(user => {
+      this.state.user = user;
+      localStorage.setItem(__WEBPACK_IMPORTED_MODULE_1__constants__["b" /* LS_USER_KEY */], JSON.stringify(user));
+      return user;
+    });
+  }
+
+  loadReactions() {
+    if (!this.accessToken) {
+      this.state.reactions = [];
+      return Promise.resolve([]);
+    }
+
+    return this.getIssue().then(issue => {
+      if (!issue.reactions.total_count) return [];
+      return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].get(issue.reactions.url, {}, '');
+    }).then(reactions => {
+      this.state.reactions = reactions;
+      return reactions;
+    });
+  }
+
+  loadCommentReactions() {
+    if (!this.accessToken) {
+      this.state.commentReactions = {};
+      return Promise.resolve([]);
+    }
+
+    const comments = this.state.comments;
+    const comentReactions = {};
+
+    return Promise.all(comments.map(comment => {
+      if (!comment.reactions.total_count) return [];
+
+      const { owner, repo } = this;
+      return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].get(`/repos/${owner}/${repo}/issues/comments/${comment.id}/reactions`, {});
+    })).then(reactionsArray => {
+      comments.forEach((comment, index) => {
+        comentReactions[comment.id] = reactionsArray[index];
+      });
+      this.state.commentReactions = comentReactions;
+
+      return comentReactions;
+    });
+  }
+
+  login() {
+    window.location.href = this.loginLink;
+  }
+
+  logout() {
+    localStorage.removeItem(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LS_ACCESS_TOKEN_KEY */]);
+    localStorage.removeItem(__WEBPACK_IMPORTED_MODULE_1__constants__["b" /* LS_USER_KEY */]);
+    this.state.user = {};
+  }
+
+  goto(page) {
+    this.state.currentPage = page;
+    this.state.comments = undefined;
+    return this.loadComments(page);
+  }
+
+  like() {
+    if (!this.accessToken) {
+      alert('Login to Like');
+      return Promise.reject();
+    }
+
+    const { owner, repo } = this;
+
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].post(`/repos/${owner}/${repo}/issues/${this.state.meta.number}/reactions`, {
+      content: 'heart'
+    }).then(reaction => {
+      this.state.reactions.push(reaction);
+      this.state.meta.reactions.heart++;
+    });
+  }
+
+  unlike() {
+    if (!this.accessToken) return Promise.reject();
+
+    const { user, reactions } = this.state;
+    const index = reactions.findIndex(reaction => reaction.user.login === user.login);
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].delete(`/reactions/${reactions[index].id}`).then(() => {
+      reactions.splice(index, 1);
+      this.state.meta.reactions.heart--;
+    });
+  }
+
+  likeAComment(commentId) {
+    if (!this.accessToken) {
+      alert('Login to Like');
+      return Promise.reject();
+    }
+
+    const { owner, repo } = this;
+    const comment = this.state.comments.find(comment => comment.id === commentId);
+
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].post(`/repos/${owner}/${repo}/issues/comments/${commentId}/reactions`, {
+      content: 'heart'
+    }).then(reaction => {
+      this.state.commentReactions[commentId].push(reaction);
+      comment.reactions.heart++;
+    });
+  }
+
+  unlikeAComment(commentId) {
+    if (!this.accessToken) return Promise.reject();
+
+    const reactions = this.state.commentReactions[commentId];
+    const comment = this.state.comments.find(comment => comment.id === commentId);
+    const { user } = this.state;
+    const index = reactions.findIndex(reaction => reaction.user.login === user.login);
+
+    return __WEBPACK_IMPORTED_MODULE_2__utils__["a" /* http */].delete(`/reactions/${reactions[index].id}`).then(() => {
+      reactions.splice(index, 1);
+      comment.reactions.heart--;
+    });
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Gitment;
+
+
+/***/ }),
+
+/***/ 166:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/**
+ * Modified from https://github.com/evil-icons/evil-icons
+ */
+
+const close = '<svg class="gitment-close-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M37.304 11.282l1.414 1.414-26.022 26.02-1.414-1.413z"/><path d="M12.696 11.282l26.022 26.02-1.414 1.415-26.022-26.02z"/></svg>';
+/* unused harmony export close */
+
+const github = '<svg class="gitment-github-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 10c-8.3 0-15 6.7-15 15 0 6.6 4.3 12.2 10.3 14.2.8.1 1-.3 1-.7v-2.6c-4.2.9-5.1-2-5.1-2-.7-1.7-1.7-2.2-1.7-2.2-1.4-.9.1-.9.1-.9 1.5.1 2.3 1.5 2.3 1.5 1.3 2.3 3.5 1.6 4.4 1.2.1-1 .5-1.6 1-2-3.3-.4-6.8-1.7-6.8-7.4 0-1.6.6-3 1.5-4-.2-.4-.7-1.9.1-4 0 0 1.3-.4 4.1 1.5 1.2-.3 2.5-.5 3.8-.5 1.3 0 2.6.2 3.8.5 2.9-1.9 4.1-1.5 4.1-1.5.8 2.1.3 3.6.1 4 1 1 1.5 2.4 1.5 4 0 5.8-3.5 7-6.8 7.4.5.5 1 1.4 1 2.8v4.1c0 .4.3.9 1 .7 6-2 10.2-7.6 10.2-14.2C40 16.7 33.3 10 25 10z"/></svg>';
+/* harmony export (immutable) */ __webpack_exports__["c"] = github;
+
+const heart = '<svg class="gitment-heart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 39.7l-.6-.5C11.5 28.7 8 25 8 19c0-5 4-9 9-9 4.1 0 6.4 2.3 8 4.1 1.6-1.8 3.9-4.1 8-4.1 5 0 9 4 9 9 0 6-3.5 9.7-16.4 20.2l-.6.5zM17 12c-3.9 0-7 3.1-7 7 0 5.1 3.2 8.5 15 18.1 11.8-9.6 15-13 15-18.1 0-3.9-3.1-7-7-7-3.5 0-5.4 2.1-6.9 3.8L25 17.1l-1.1-1.3C22.4 14.1 20.5 12 17 12z"/></svg>';
+/* harmony export (immutable) */ __webpack_exports__["a"] = heart;
+
+const spinner = '<svg class="gitment-spinner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 18c-.6 0-1-.4-1-1V9c0-.6.4-1 1-1s1 .4 1 1v8c0 .6-.4 1-1 1z"/><path opacity=".3" d="M25 42c-.6 0-1-.4-1-1v-8c0-.6.4-1 1-1s1 .4 1 1v8c0 .6-.4 1-1 1z"/><path opacity=".3" d="M29 19c-.2 0-.3 0-.5-.1-.4-.3-.6-.8-.3-1.3l4-6.9c.3-.4.8-.6 1.3-.3.4.3.6.8.3 1.3l-4 6.9c-.2.2-.5.4-.8.4z"/><path opacity=".3" d="M17 39.8c-.2 0-.3 0-.5-.1-.4-.3-.6-.8-.3-1.3l4-6.9c.3-.4.8-.6 1.3-.3.4.3.6.8.3 1.3l-4 6.9c-.2.2-.5.4-.8.4z"/><path opacity=".93" d="M21 19c-.3 0-.6-.2-.8-.5l-4-6.9c-.3-.4-.1-1 .3-1.3.4-.3 1-.1 1.3.3l4 6.9c.3.4.1 1-.3 1.3-.2.2-.3.2-.5.2z"/><path opacity=".3" d="M33 39.8c-.3 0-.6-.2-.8-.5l-4-6.9c-.3-.4-.1-1 .3-1.3.4-.3 1-.1 1.3.3l4 6.9c.3.4.1 1-.3 1.3-.2.1-.3.2-.5.2z"/><path opacity=".65" d="M17 26H9c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"/><path opacity=".3" d="M41 26h-8c-.6 0-1-.4-1-1s.4-1 1-1h8c.6 0 1 .4 1 1s-.4 1-1 1z"/><path opacity=".86" d="M18.1 21.9c-.2 0-.3 0-.5-.1l-6.9-4c-.4-.3-.6-.8-.3-1.3.3-.4.8-.6 1.3-.3l6.9 4c.4.3.6.8.3 1.3-.2.3-.5.4-.8.4z"/><path opacity=".3" d="M38.9 33.9c-.2 0-.3 0-.5-.1l-6.9-4c-.4-.3-.6-.8-.3-1.3.3-.4.8-.6 1.3-.3l6.9 4c.4.3.6.8.3 1.3-.2.3-.5.4-.8.4z"/><path opacity=".44" d="M11.1 33.9c-.3 0-.6-.2-.8-.5-.3-.4-.1-1 .3-1.3l6.9-4c.4-.3 1-.1 1.3.3.3.4.1 1-.3 1.3l-6.9 4c-.1.2-.3.2-.5.2z"/><path opacity=".3" d="M31.9 21.9c-.3 0-.6-.2-.8-.5-.3-.4-.1-1 .3-1.3l6.9-4c.4-.3 1-.1 1.3.3.3.4.1 1-.3 1.3l-6.9 4c-.2.2-.3.2-.5.2z"/></svg>';
+/* harmony export (immutable) */ __webpack_exports__["b"] = spinner;
+
+
+/***/ }),
+
+/***/ 167:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__icons__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(69);
+
+
+
+function renderHeader({ meta, user, reactions }, instance) {
+  const container = document.createElement('div');
+  container.lang = "en-US";
+  container.className = 'gitment-container gitment-header-container';
+
+  const likeButton = document.createElement('span');
+  const likedReaction = reactions.find(reaction => reaction.content === 'heart' && reaction.user.login === user.login);
+  likeButton.className = 'gitment-header-like-btn';
+  likeButton.innerHTML = `
+    ${__WEBPACK_IMPORTED_MODULE_0__icons__["a" /* heart */]}
+    ${likedReaction ? 'Unlike' : 'Like'}
+    ${meta.reactions && meta.reactions.heart ? ` • <strong>${meta.reactions.heart}</strong> Liked` : ''}
+  `;
+
+  if (likedReaction) {
+    likeButton.classList.add('liked');
+    likeButton.onclick = () => instance.unlike();
+  } else {
+    likeButton.classList.remove('liked');
+    likeButton.onclick = () => instance.like();
+  }
+  container.appendChild(likeButton);
+
+  const commentsCount = document.createElement('span');
+  commentsCount.innerHTML = `
+    ${meta.comments ? ` • <strong>${meta.comments}</strong> Comments` : ''}
+  `;
+  container.appendChild(commentsCount);
+
+  const issueLink = document.createElement('a');
+  issueLink.className = 'gitment-header-issue-link';
+  issueLink.href = meta.html_url;
+  issueLink.target = '_blank';
+  issueLink.innerText = 'Issue Page';
+  container.appendChild(issueLink);
+
+  return container;
+}
+
+function renderComments({ meta, comments, commentReactions, currentPage, user, error }, instance) {
+  const container = document.createElement('div');
+  container.lang = "en-US";
+  container.className = 'gitment-container gitment-comments-container';
+
+  if (error) {
+    const errorBlock = document.createElement('div');
+    errorBlock.className = 'gitment-comments-error';
+
+    if (error === __WEBPACK_IMPORTED_MODULE_1__constants__["c" /* NOT_INITIALIZED_ERROR */] && user.login && user.login.toLowerCase() === instance.owner.toLowerCase()) {
+      const initHint = document.createElement('div');
+      const initButton = document.createElement('button');
+      initButton.className = 'gitment-comments-init-btn';
+      initButton.onclick = () => {
+        initButton.setAttribute('disabled', true);
+        instance.init().catch(e => {
+          initButton.removeAttribute('disabled');
+          alert(e);
+        });
+      };
+      initButton.innerText = 'Initialize Comments';
+      initHint.appendChild(initButton);
+      errorBlock.appendChild(initHint);
+    } else {
+      errorBlock.innerText = error;
+    }
+    container.appendChild(errorBlock);
+    return container;
+  } else if (comments === undefined) {
+    const loading = document.createElement('div');
+    loading.innerText = 'Loading comments...';
+    loading.className = 'gitment-comments-loading';
+    container.appendChild(loading);
+    return container;
+  } else if (!comments.length) {
+    const emptyBlock = document.createElement('div');
+    emptyBlock.className = 'gitment-comments-empty';
+    emptyBlock.innerText = 'No Comment Yet';
+    container.appendChild(emptyBlock);
+    return container;
+  }
+
+  const commentsList = document.createElement('ul');
+  commentsList.className = 'gitment-comments-list';
+
+  comments.forEach(comment => {
+    const createDate = new Date(comment.created_at);
+    const updateDate = new Date(comment.updated_at);
+    const commentItem = document.createElement('li');
+    commentItem.className = 'gitment-comment';
+    commentItem.innerHTML = `
+      <a class="gitment-comment-avatar" href="${comment.user.html_url}" target="_blank">
+        <img class="gitment-comment-avatar-img" src="${comment.user.avatar_url}"/>
+      </a>
+      <div class="gitment-comment-main">
+        <div class="gitment-comment-header">
+          <a class="gitment-comment-name" href="${comment.user.html_url}" target="_blank">
+            ${comment.user.login}
+          </a>
+          commented on
+          <span title="${createDate}">${createDate.toDateString()}</span>
+          ${createDate.toString() !== updateDate.toString() ? ` • <span title="comment was edited at ${updateDate}">edited</span>` : ''}
+          <div class="gitment-comment-like-btn">${__WEBPACK_IMPORTED_MODULE_0__icons__["a" /* heart */]} ${comment.reactions.heart || ''}</div>
+        </div>
+        <div class="gitment-comment-body gitment-markdown">${comment.body_html}</div>
+      </div>
+    `;
+    const likeButton = commentItem.querySelector('.gitment-comment-like-btn');
+    const likedReaction = commentReactions[comment.id] && commentReactions[comment.id].find(reaction => reaction.content === 'heart' && reaction.user.login === user.login);
+    if (likedReaction) {
+      likeButton.classList.add('liked');
+      likeButton.onclick = () => instance.unlikeAComment(comment.id);
+    } else {
+      likeButton.classList.remove('liked');
+      likeButton.onclick = () => instance.likeAComment(comment.id);
+    }
+
+    // dirty
+    // use a blank image to trigger height calculating when element rendered
+    const imgTrigger = document.createElement('img');
+    const markdownBody = commentItem.querySelector('.gitment-comment-body');
+    imgTrigger.className = 'gitment-hidden';
+    imgTrigger.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+    imgTrigger.onload = () => {
+      if (markdownBody.clientHeight > instance.maxCommentHeight) {
+        markdownBody.classList.add('gitment-comment-body-folded');
+        markdownBody.style.maxHeight = instance.maxCommentHeight + 'px';
+        markdownBody.title = 'Click to Expand';
+        markdownBody.onclick = () => {
+          markdownBody.classList.remove('gitment-comment-body-folded');
+          markdownBody.style.maxHeight = '';
+          markdownBody.title = '';
+          markdownBody.onclick = null;
+        };
+      }
+    };
+    commentItem.appendChild(imgTrigger);
+
+    commentsList.appendChild(commentItem);
+  });
+
+  container.appendChild(commentsList);
+
+  if (meta) {
+    const pageCount = Math.ceil(meta.comments / instance.perPage);
+    if (pageCount > 1) {
+      const pagination = document.createElement('ul');
+      pagination.className = 'gitment-comments-pagination';
+
+      if (currentPage > 1) {
+        const previousButton = document.createElement('li');
+        previousButton.className = 'gitment-comments-page-item';
+        previousButton.innerText = 'Previous';
+        previousButton.onclick = () => instance.goto(currentPage - 1);
+        pagination.appendChild(previousButton);
+      }
+
+      for (let i = 1; i <= pageCount; i++) {
+        const pageItem = document.createElement('li');
+        pageItem.className = 'gitment-comments-page-item';
+        pageItem.innerText = i;
+        pageItem.onclick = () => instance.goto(i);
+        if (currentPage === i) pageItem.classList.add('gitment-selected');
+        pagination.appendChild(pageItem);
+      }
+
+      if (currentPage < pageCount) {
+        const nextButton = document.createElement('li');
+        nextButton.className = 'gitment-comments-page-item';
+        nextButton.innerText = 'Next';
+        nextButton.onclick = () => instance.goto(currentPage + 1);
+        pagination.appendChild(nextButton);
+      }
+
+      container.appendChild(pagination);
+    }
+  }
+
+  return container;
+}
+
+function renderEditor({ user, error }, instance) {
+  const container = document.createElement('div');
+  container.lang = "en-US";
+  container.className = 'gitment-container gitment-editor-container';
+
+  const shouldDisable = user.login && !error ? '' : 'disabled';
+  const disabledTip = user.login ? '' : 'Login to Comment';
+  container.innerHTML = `
+      ${user.login ? `<a class="gitment-editor-avatar" href="${user.html_url}" target="_blank">
+            <img class="gitment-editor-avatar-img" src="${user.avatar_url}"/>
+          </a>` : user.isLoggingIn ? `<div class="gitment-editor-avatar">${__WEBPACK_IMPORTED_MODULE_0__icons__["b" /* spinner */]}</div>` : `<a class="gitment-editor-avatar" href="${instance.loginLink}" title="login with GitHub">
+              ${__WEBPACK_IMPORTED_MODULE_0__icons__["c" /* github */]}
+            </a>`}
+    </a>
+    <div class="gitment-editor-main">
+      <div class="gitment-editor-header">
+        <nav class="gitment-editor-tabs">
+          <button class="gitment-editor-tab gitment-selected">Write</button>
+          <button class="gitment-editor-tab">Preview</button>
+        </nav>
+        <div class="gitment-editor-login">
+          ${user.login ? '<a class="gitment-editor-logout-link">Logout</a>' : user.isLoggingIn ? 'Logging in...' : `<a class="gitment-editor-login-link" href="${instance.loginLink}">Login</a> with GitHub`}
+        </div>
+      </div>
+      <div class="gitment-editor-body">
+        <div class="gitment-editor-write-field">
+          <textarea placeholder="Leave a comment" title="${disabledTip}" ${shouldDisable}></textarea>
+        </div>
+        <div class="gitment-editor-preview-field gitment-hidden">
+          <div class="gitment-editor-preview gitment-markdown"></div>
+        </div>
+      </div>
+    </div>
+    <div class="gitment-editor-footer">
+      <a class="gitment-editor-footer-tip" href="https://guides.github.com/features/mastering-markdown/" target="_blank">
+        Styling with Markdown is supported
+      </a>
+      <button class="gitment-editor-submit" title="${disabledTip}" ${shouldDisable}>Comment</button>
+    </div>
+  `;
+  if (user.login) {
+    container.querySelector('.gitment-editor-logout-link').onclick = () => instance.logout();
+  }
+
+  const writeField = container.querySelector('.gitment-editor-write-field');
+  const previewField = container.querySelector('.gitment-editor-preview-field');
+
+  const textarea = writeField.querySelector('textarea');
+  textarea.oninput = () => {
+    textarea.style.height = 'auto';
+    const style = window.getComputedStyle(textarea, null);
+    const height = parseInt(style.height, 10);
+    const clientHeight = textarea.clientHeight;
+    const scrollHeight = textarea.scrollHeight;
+    if (clientHeight < scrollHeight) {
+      textarea.style.height = height + scrollHeight - clientHeight + 'px';
+    }
+  };
+
+  const [writeTab, previewTab] = container.querySelectorAll('.gitment-editor-tab');
+  writeTab.onclick = () => {
+    writeTab.classList.add('gitment-selected');
+    previewTab.classList.remove('gitment-selected');
+    writeField.classList.remove('gitment-hidden');
+    previewField.classList.add('gitment-hidden');
+
+    textarea.focus();
+  };
+  previewTab.onclick = () => {
+    previewTab.classList.add('gitment-selected');
+    writeTab.classList.remove('gitment-selected');
+    previewField.classList.remove('gitment-hidden');
+    writeField.classList.add('gitment-hidden');
+
+    const preview = previewField.querySelector('.gitment-editor-preview');
+    const content = textarea.value.trim();
+    if (!content) {
+      preview.innerText = 'Nothing to preview';
+      return;
+    }
+
+    preview.innerText = 'Loading preview...';
+    instance.markdown(content).then(html => preview.innerHTML = html);
+  };
+
+  const submitButton = container.querySelector('.gitment-editor-submit');
+  submitButton.onclick = () => {
+    submitButton.innerText = 'Submitting...';
+    submitButton.setAttribute('disabled', true);
+    instance.post(textarea.value.trim()).then(data => {
+      textarea.value = '';
+      textarea.style.height = 'auto';
+      submitButton.removeAttribute('disabled');
+      submitButton.innerText = 'Comment';
+    }).catch(e => {
+      alert(e);
+      submitButton.removeAttribute('disabled');
+      submitButton.innerText = 'Comment';
+    });
+  };
+
+  return container;
+}
+
+function renderFooter() {
+  const container = document.createElement('div');
+  container.lang = "en-US";
+  container.className = 'gitment-container gitment-footer-container';
+  container.innerHTML = `
+    Powered by
+    <a class="gitment-footer-project-link" href="https://github.com/imsun/gitment" target="_blank">
+      Gitment
+    </a>
+  `;
+  return container;
+}
+
+function render(state, instance) {
+  const container = document.createElement('div');
+  container.lang = "en-US";
+  container.className = 'gitment-container gitment-root-container';
+  container.appendChild(instance.renderHeader(state, instance));
+  container.appendChild(instance.renderComments(state, instance));
+  container.appendChild(instance.renderEditor(state, instance));
+  container.appendChild(instance.renderFooter(state, instance));
+  return container;
+}
+
+/* harmony default export */ __webpack_exports__["a"] = ({ render, renderHeader, renderComments, renderEditor, renderFooter });
+
+/***/ }),
+
+/***/ 168:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(142);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(141);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__App_vue__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__App_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__App_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Detail_vue__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Detail_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_Detail_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_List_vue__ = __webpack_require__(140);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_List_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_List_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Error_vue__ = __webpack_require__(139);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Error_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_Error_vue__);
+
+
+
+
+
+
+
+
+// install router
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]);
+
+const routes = [{
+    path: '/list',
+    name: 'list',
+    redirect: '/'
+}, {
+    path: '/detail/:id',
+    name: 'detail',
+    component: __WEBPACK_IMPORTED_MODULE_3__components_Detail_vue___default.a
+}, {
+    path: '/:id(\\d+)',
+    name: 'detail',
+    component: __WEBPACK_IMPORTED_MODULE_3__components_Detail_vue___default.a
+}, {
+    path: '/',
+    name: 'list',
+    component: __WEBPACK_IMPORTED_MODULE_4__components_List_vue___default.a
+}, {
+    path: 'error',
+    name: 'error',
+    component: __WEBPACK_IMPORTED_MODULE_5__components_Error_vue___default.a
+}, {
+    path: '*',
+    name: 'error',
+    component: __WEBPACK_IMPORTED_MODULE_5__components_Error_vue___default.a
+}];
+
+var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
+    base: "blog/",
+    routes: routes,
+    mode: 'history'
+});
+
+// router.beforeEach(function () {
+//     window.scrollTo(0, 0);
+// })
+
+// router.redirect({
+//     '*': '/list'
+// })
+
+// 4. 创建和挂载根实例。
+// 记得要通过 router 配置参数注入路由，
+// 从而让整个应用都有路由功能
+const app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
+    router,
+    render: h => h(__WEBPACK_IMPORTED_MODULE_2__App_vue___default.a)
+}).$mount('#app');
+
+/***/ }),
+
+/***/ 369:
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 370:
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 371:
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 372:
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 377:
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "issue-list"
+  }, _vm._l((_vm.issues), function(item) {
+    return _c('div', {
+      staticClass: "issue-item"
+    }, [_c('router-link', {
+      attrs: {
+        "to": '/detail/' + item.number
+      }
+    }, [_c('div', {
+      staticClass: "issue-text"
+    }, [_c('h2', [_vm._v(_vm._s(item.title))]), _vm._v(" "), _c('p', {
+      domProps: {
+        "innerHTML": _vm._s(_vm.summary(item.body_html))
+      }
+    })])])], 1)
+  }))
+},staticRenderFns: []}
+
+/***/ }),
+
+/***/ 378:
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "content"
+  }, [_c('p', [_vm._v("页面不存在，" + _vm._s(_vm.seconds) + "秒后回到首页")])])
+},staticRenderFns: []}
+
+/***/ }),
+
+/***/ 379:
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('section', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (!_vm.loading),
+      expression: "!loading"
+    }]
+  }, [_c('div', {
+    staticClass: "content"
+  }, [(_vm.detail.paragraph && _vm.detail.paragraph.length) ? _c('ul', {
+    staticClass: "content-nav"
+  }, _vm._l((_vm.detail.paragraph), function(p) {
+    return _c('a', {
+      class: {
+        'active': _vm.hash === p.id
+      },
+      attrs: {
+        "href": '#' + p.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.hash = p.id
+        }
+      }
+    }, [_c('li', {
+      domProps: {
+        "innerHTML": _vm._s(p.label)
+      }
+    })])
+  })) : _vm._e(), _vm._v(" "), _c('article', {
+    staticClass: "gitment-comment-body gitment-markdown"
+  }, [_c('h1', [_vm._v(_vm._s(_vm.detail.title))]), _vm._v(" "), _c('div', {
+    domProps: {
+      "innerHTML": _vm._s(_vm.detail.html)
+    }
+  })])]), _vm._v(" "), _c('div', {
+    attrs: {
+      "id": "comments"
+    }
+  })])
+},staticRenderFns: []}
+
+/***/ }),
+
+/***/ 380:
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    attrs: {
+      "id": "app"
+    }
+  }, [_c('header', {
+    staticClass: "main"
+  }, [_c('div', {
+    staticClass: "main-info"
+  }, [_c('a', {
+    attrs: {
+      "href": _vm.user.html_url,
+      "target": "_blank"
+    }
+  }, [_c('div', {
+    staticClass: "main-avatar"
+  }, [_c('img', {
+    attrs: {
+      "src": _vm.user.avatar_url
+    }
+  })]), _vm._v(" "), _c('font', [_vm._v(_vm._s(_vm.user.name || _vm.user.login))])], 1)]), _vm._v(" "), _c('div', {
+    staticClass: "main-title"
+  }, [_c('router-link', {
+    attrs: {
+      "to": '/'
+    }
+  }, [_vm._v("\n                " + _vm._s(_vm.title))])], 1)]), _vm._v(" "), _c('section', {
+    ref: "context",
+    staticClass: "context",
+    on: {
+      "scroll": _vm.onScrolling
+    }
+  }, [_c('router-view', {
+    ref: "context-view",
+    attrs: {
+      "issues": _vm.issues
+    },
+    on: {
+      "getMoreIssues": _vm.getIssues,
+      "loading": _vm.setLoading
+    }
+  }), _vm._v(" "), _c('div', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.loading),
+      expression: "loading"
+    }],
+    staticClass: "loading-tips"
+  }, [_c('svg', {
+    attrs: {
+      "height": "60",
+      "viewBox": "0 0 16 16",
+      "version": "1.1",
+      "width": "60",
+      "aria-hidden": "true"
+    }
+  }, [_c('path', {
+    attrs: {
+      "fill-rule": "evenodd",
+      "d": "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+    }
+  })]), _vm._v(" "), _c('p', [_vm._v("loading")])])], 1), _vm._v(" "), _vm._m(0)])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('footer', {
+    staticClass: "main"
+  }, [_c('p', [_vm._v("Powered By "), _c('a', {
+    attrs: {
+      "href": "http://github.com"
+    }
+  }, [_vm._v("Github")])])])
+}]}
+
+/***/ }),
+
+/***/ 68:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return OWNER; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return REPO; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return OAUTH; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TITLE; });
+const OWNER = "Toninie";
+const REPO = "toninie.github.io";
+const OAUTH = {
+    client_id: 'b3e11e60e74839d5c0b6',
+    client_secret: 'affb7389c92dfd8b53bd08bfce74b735567e1e71'
+};
+const TITLE = "Mr.Toni Barbershop";
+
+
+
+/***/ }),
+
+/***/ 69:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const LS_ACCESS_TOKEN_KEY = 'gitment-comments-token';
+/* harmony export (immutable) */ __webpack_exports__["a"] = LS_ACCESS_TOKEN_KEY;
+
+const LS_USER_KEY = 'gitment-user-info';
+/* harmony export (immutable) */ __webpack_exports__["b"] = LS_USER_KEY;
+
+
+const NOT_INITIALIZED_ERROR = new Error('Comments Not Initialized');
+/* harmony export (immutable) */ __webpack_exports__["c"] = NOT_INITIALIZED_ERROR;
+
+
+/***/ })
+
+},[168]);
+//# sourceMappingURL=app.js.map?t=8d07e3fde527baa50fe0
